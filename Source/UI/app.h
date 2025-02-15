@@ -14,6 +14,7 @@
 #define APP_H
 
 #include "classes.h"
+#include <string>
 
 //
 // XM8 application
@@ -25,6 +26,7 @@ public:
 										// constructor
 	~App();
 										// destructor
+	bool LoadROM(const std::string& path);
 	bool Init();
 										// initialize
 	void Deinit();
