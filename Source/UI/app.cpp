@@ -10,6 +10,7 @@
 
 #ifdef SDL
 
+#include <iostream>
 #include "os.h"
 #include "common.h"
 #include "classes.h"
@@ -153,6 +154,13 @@ App::~App()
 // Init()
 // initialize
 //
+
+bool App::LoadROM(const std::string& path) {
+    // Implement your ROM loading logic here
+    std::cout << "Loading ROM from: " << path << std::endl;
+    // Return true if loading is successful, otherwise false
+    return true;
+}
 bool App::Init()
 {
 	Audio::OpenParam param;
