@@ -10,6 +10,8 @@
 
 #ifdef SDL
 
+#include <iostream>
+#include <string>
 #include "os.h"
 #include "common.h"
 #include "app.h"
@@ -38,7 +40,7 @@ int main(int argc, char *argv[])
 
 	SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight");
 
-		// initialize SDL
+	// initialize SDL
 	ret = SDL_Init( 
 		SDL_INIT_VIDEO |
 		SDL_INIT_AUDIO |
@@ -52,7 +54,7 @@ int main(int argc, char *argv[])
 	}
 
 	// initialize joystick subsystem
-	ret = SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) ;
+	ret = SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER);
 	if (ret != 0) {
 		fprintf(stderr, "XM8: SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) failed\n");
 		SDL_Quit();
@@ -61,6 +63,18 @@ int main(int argc, char *argv[])
 
 	// new
 	app = new App;
+
+	// check for ROM file argument
+	if (argc > 1) {
+		std::string romPath = argv[1];
+		if (!app->LoadROM(romPath)) {
+			fprintf(stderr, "XM8: Failed to load ROM: %s\n", romPath.c_str());
+			delete app;
+			SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+			SDL_Quit();
+			return 1;
+		}
+	}
 
 	// initialize application
 	if (app->Init() == true) {
