@@ -444,6 +444,9 @@ const char* Platform::FindNext(Uint32 *info)
 			}
 		}		
 
+			{
+			break;
+		}
 	}
 
 	// name
