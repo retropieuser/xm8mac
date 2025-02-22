@@ -444,10 +444,6 @@ const char* Platform::FindNext(Uint32 *info)
 			}
 		}		
 
-		// check .
-		if (entry->d_name[0] != '.') {
-			break;
-		}
 	}
 
 	// name
