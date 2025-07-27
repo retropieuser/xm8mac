@@ -37,8 +37,8 @@ http://retropc.net/pi/xm8/index.html
 
 | CPU           | 最小OSバージョン    | 実行ファイル                                                 |
 | ------------- | ------------------- | ------------------------------------------------------------ |
-| x86_64        | macOS 10.13 High Sierra | [x86_64版](https://github.com/bubio/xm8mac/releases/download/1.7.4/XM8_macOS_x86_64.dmg) |
-| Apple Silicon | macOS 11 Big Sur    | [Apple Silicon版](https://github.com/bubio/xm8mac/releases/download/1.7.4/XM8_macOS_AppleSilicon.dmg) |
+| x86_64        | macOS 10.13 High Sierra | [x86_64版](https://github.com/bubio/xm8mac/releases/download/1.7.5/XM8_macOS_x86_64.dmg) |
+| Apple Silicon | macOS 11 Big Sur    | [Apple Silicon版](https://github.com/bubio/xm8mac/releases/download/1.7.5/XM8_macOS_AppleSilicon.dmg) |
 
 <br />
 
@@ -131,7 +131,7 @@ https://github.com/libsdl-org/SDL/releases
 
 <br />
 
-これを解凍してできるinclude, libをxm8の≈\SDLへ展開します。以下のようになります。
+これを解凍してできるinclude, libをxm8の\SDLへ展開します。以下のようになります。
 
 - Builder\Windows\SDL\include（インクルードファイル）
 - Builder\Windows\SDL\lib\x86（32bit向けライブラリ）
@@ -200,8 +200,8 @@ Builder/Android/app/jni/SDL
 
 にSDL2のsrcフォルダ、includeフォルダをコピーします。以下のようになります。
 
-Builder/Android/app/jni/SDL\include（インクルードファイル）
-Builder/Android/app/jni/SDL\src（ソースファイル）
+- Builder/Android/app/jni/SDL\include（インクルードファイル）
+- Builder/Android/app/jni/SDL\src（ソースファイル）
 
 <br />
 

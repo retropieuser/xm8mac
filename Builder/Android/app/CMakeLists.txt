@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 # Get version from environment variable
-#set(PROJECT_VERSION 1.7.4)
+#set(PROJECT_VERSION 1.7.5)
 
 # Project Name
 #project(XM8 VERSION ${PROJECT_VERSION})
@@ -24,7 +24,7 @@ file(GLOB SDL_SOURCE_FILES
         ${SDL_PATH}/src/audio/dummy/*.c
         ${SDL_PATH}/src/audio/aaudio/*.c
         ${SDL_PATH}/src/audio/openslES/*.c
-		${SDL_PATH}/src/atomic/*.c
+	${SDL_PATH}/src/atomic/*.c
 #	${SDL_PATH}/src/atomic/SDL_atomic.c.arm
 #	${SDL_PATH}/src/atomic/SDL_spinlock.c.arm
         ${SDL_PATH}/src/core/android/*.c
