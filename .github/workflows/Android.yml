@@ -1,0 +1,79 @@
+name: Android Build
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+    paths-ignore:
+      - '*.md'
+      - 'Documents/**'
+  pull_request:
+    types: [opened, synchronize]
+    paths-ignore:
+      - '*.md'
+      - 'Documents/**'
+  release:
+    types: [published]
+    paths-ignore:
+      - '*.md'
+      - 'Documents/**'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-android:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Install NDK 23.2.8568313
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "ndk;23.2.8568313"
+          
+      - name: Setup SDL2
+        working-directory: Builder/Android
+        run: ./setup_sdl2.sh
+
+      - name: Build with Gradle
+        working-directory: Builder/Android
+        run: |
+          # 今回は、Secrets が設定されいなければ署名なしのapkファイルが作成されるよう判定処理をいれています。
+          # 確実に署名させたいのであれば、判定処理を外すことで署名エラーとしてしまってもよいと思います。
+          if [[ -n "${{ secrets.KEYSTORE_BASE64 }}" ]]; then
+            echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.keystore
+            export KEYSTORE_PASSWORD="${{ secrets.KEYSTORE_PASSWORD }}"
+            export KEY_ALIAS="${{ secrets.KEY_ALIAS }}"
+            export KEY_PASSWORD="${{ secrets.KEY_PASSWORD }}"
+          fi
+          ./gradlew assembleRelease
+
+      - name: Rename APK to XM8_Android.apk
+        run: |
+          APK_PATH=$(ls Builder/Android/app/build/outputs/apk/release/*.apk | head -n 1)
+          mv "$APK_PATH" Builder/Android/app/build/outputs/apk/release/XM8_Android.apk
+
+      - name: Upload APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: XM8_Android.apk
+          path: Builder/Android/app/build/outputs/apk/release/XM8_Android.apk
+
+      - name: Update Release
+        if: ${{ github.event_name == 'release' && !env.ACT }}
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: Builder/Android/app/build/outputs/apk/release/XM8_Android.apk
+          overwrite: true

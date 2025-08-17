@@ -10,7 +10,7 @@
 
 cmake_minimum_required(VERSION 3.15)
 
-foreach(_policy CMP0111 CMP0126 CMP0135)
+foreach(_policy CMP0111 CMP0126 CMP0135 CMP0175 CMP0177)
   if(POLICY ${_policy})
     cmake_policy(SET ${_policy} NEW)
     set(CMAKE_POLICY_DEFAULT_${_policy} NEW)
@@ -32,7 +32,7 @@ include(CMakeDependentOption)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Builder/CMake")
 
 # Get version from environment variable
-set(PROJECT_VERSION 1.7.5)
+set(PROJECT_VERSION 1.7.6)
 
 # Project Name
 project(XM8 VERSION ${PROJECT_VERSION})
@@ -58,20 +58,23 @@ set(CMAKE_CXX_STANDARD_REQUIRED OFF)
 # find_package(Threads REQUIRED)
 
 
-# Find SDL2 library and add to linker flags
-if(NOT APPLE)
-  find_package(SDL2 REQUIRED)
+# Dependencies must be included after Platforms.
+set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13")
+if(APPLE)
+  # macOS: Build as bundle and use bundled SDL2 source by default
+  set(XM8_SYSTEM_SDL2 OFF CACHE BOOL "Use system-installed SDL2" FORCE)
+  set(XM8_STATIC_SDL2 OFF CACHE BOOL "Link SDL2 statically" FORCE)
+  message(STATUS "📦 SDL2: using bundled source")
 else()
-  # Dependencies must be included after Platforms.
-  include(Dependencies)
+  # Linux: Use system-installed SDL2 by default
+  set(XM8_SYSTEM_SDL2 ON CACHE BOOL "Use system-installed SDL2" FORCE)
+  set(XM8_STATIC_SDL2 OFF CACHE BOOL "Link SDL2 statically" FORCE)
+  message(STATUS "📦 SDL2: using system-installed library")
 endif()
+include(Dependencies)
 
 # xBRZ
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Source/Filter/xBRZ)
-
-# Add macro definition
-add_definitions(-DSDL)
-add_definitions(-D_PC8801MA)
 
 # Set compile options
 add_compile_options(-Wall)
@@ -138,14 +141,14 @@ set(SRCS
 
 set(BIN_TARGET "xm8")
 add_executable(${BIN_TARGET} MACOSX_BUNDLE ${SRCS} Builder/macOS/AppIcon.icns)
+target_compile_definitions(${BIN_TARGET} PRIVATE SDL _PC8801MA) 
 
 if(CMAKE_STRIP)
   add_custom_command(
     TARGET ${BIN_TARGET} POST_BUILD
-    DEPENDS ${BIN_TARGET}
     COMMAND $<$<CONFIG:Release>:${CMAKE_STRIP}>
             $<$<CONFIG:MinSizeRel>:${CMAKE_STRIP}>
-    ARGS $<TARGET_FILE:${BIN_TARGET}>)
+            $<TARGET_FILE:${BIN_TARGET}>)
 endif()
 
 if(APPLE)
@@ -162,8 +165,6 @@ if(APPLE)
       MACOSX_BUNDLE_ICON_FILE "AppIcon.icns"
       MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Builder/macOS/Info.plist"
   )
-  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13.0")
-  # option(MACOSX_STANDALONE_APP_BUNDLE "Generate a portable app bundle to use on other devices (requires sudo)" OFF)
 
   install (TARGETS ${BIN_TARGET} DESTINATION ./)
 
@@ -177,18 +178,13 @@ if(APPLE)
 
 endif()
 
-set(CPACK On)
+option(ENABLE_PACKAGING "Enable CPack packaging" ON)
 
-# Set link options
-if(APPLE)
-  target_link_libraries(${BIN_TARGET} PRIVATE SDL2::SDL2 xbrz)
-else()
-  target_link_libraries(${BIN_TARGET} PRIVATE ${SDL2_LIBRARIES} xbrz)
-endif()
-
+# Link SDL2 and xBRZ to xm8 target using interface target from Dependencies.cmake
+target_link_libraries(${BIN_TARGET} PRIVATE XM8::SDL xbrz)
 
 # Packaging                      
-if(CPACK)
+if(ENABLE_PACKAGING)
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     string(TOLOWER ${PROJECT_NAME} project_name)
     set(CPACK_PACKAGE_NAME ${project_name})
@@ -220,6 +216,7 @@ if(CPACK)
 
     # -G RPM
     set(CPACK_RPM_FILE_NAME RPM-DEFAULT)
+    set(CPACK_RPM_PACKAGE_REQUIRES "SDL2")
 
     find_program(RPMBUILD rpmbuild)
     if(RPMBUILD)
