@@ -84,7 +84,7 @@ ROMファイルの配置場所は、設定ファイルと同じ以下になり�
 
 - Homebrew
   
-  [Homebrew](https://brew.sh/index_ja)のインストールが必要です。
+  [Homebrew](https://brew.sh/)のインストールが必要です。
   cmakeなどビルドに必要なツールの取得に使用します。
 
 <br />
@@ -129,13 +129,14 @@ Builder/Windowsフォルダにあるsetup_sdl2.ps1を実行すると、ビルド
 以下のようになります。
 
 - Builder\Windows\SDL\include（インクルードファイル）
-- Builder\Windows\SDL\lib\x86（32bit向けライブラリ）
-- Builder\Windows\SDL\lib\x64（64bit向けライブラリ）
+- Builder\Windows\SDL\lib\x86（x86向けライブラリ）
+- Builder\Windows\SDL\lib\x64（x64向けライブラリ）
+- Builder\Windows\SDL\lib\arm64（arm64向けライブラリ）
 
 <br />
 
 Builder/Windows/XM8.sln をVisual Studioでビルドします。
-Builder/Windows/x64、Builder/Windows/Win32に出力されます。実行に必要なのは、XM8.exeとSDL2.dllです。
+Builder/Windows/x64、Builder/Windows/Win32、Builder/Windows/ARM64に出力されます。実行に必要なのは、XM8.exeとSDL2.dllです。
 
 BIOS ROMファイルの置き場所は以下になります。
 
