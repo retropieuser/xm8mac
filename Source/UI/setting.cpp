@@ -125,6 +125,8 @@
 										// cursor to num pad
 #define DEFAULT_NUM_TO_NUMPAD			(false)
 										// num to num pad
+#define SHOW_HIDDEN_FILES				(false)
+										// show/hide files
 
 //
 // Setting()
@@ -166,6 +168,7 @@ Setting::Setting()
 	
 	audio_output_device = DEFAULT_AUDIO_OUTPUT_SYSTEM_DEFAULT;
 	mouse_move_softkey_enable = DEFAULT_SHOW_SOFTKEY_MOUSE_MOVE;
+	show_hidden_files = SHOW_HIDDEN_FILES;
 
 	// setting (power)
 	watch_battery = true;
@@ -587,6 +590,24 @@ void Setting::SetExRAM(bool enable)
 	else {
 		config.dipswitch |= DIP_DISABLE_EXRAM;
 	}
+}
+
+//
+// IsShowHiddenFiles()
+// get show hidden files
+//
+bool Setting::IsShowHiddenFiles()
+{
+    return show_hidden_files;
+}
+
+//
+// SetShowHiddenFiles()
+// set show hidden files
+//
+void Setting::SetShowHiddenFiles(bool enable)
+{
+    show_hidden_files = enable;
 }
 
 //
@@ -1309,3 +1330,4 @@ bool Setting::Is400Line()
 
 
 #endif // SDL
+
