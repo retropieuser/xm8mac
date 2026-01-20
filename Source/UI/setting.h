@@ -302,8 +302,11 @@ private:
 										// cursor to num pad enable (version 1.73)
 	bool num_to_numpad_enable;
 										// num to num pad enable (version 1.73)
+	bool show_hidden_files;
+										// show/hide hidden files in file explorer
 };
 
 #endif // SETTING_H
 
 #endif // SDL
+
