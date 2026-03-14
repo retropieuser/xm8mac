@@ -1,3 +1,33 @@
+# 1.7.7
+
+2026年3月14日 土曜日
+
+<br/>　
+
+## 動作環境
+| Platform | CPU | 最小OSバージョン |
+| ------------- | ------------------- | ------------- |
+| Mac | x86_64 | macOS 10.13 High Sierra |
+| Mac | Apple Silicon | macOS 11 Big Sur |
+| Windows | x86_64 | Windows 10 |
+| Windows | x86_32 | Windows 10 |
+| Linux | x86_64 | - |
+| Raspberry Pi OS | armhf | -|
+| Android | Arm | Android 4.4 |
+
+<br />　
+
+## 変更点
+- Wizardry: Proving Grounds of the Mad Overlordを動作するようにしました。
+
+<br />　
+
+## 既知の問題
+- 特にありません。
+
+<br/>　
+<br/>　
+
 # 1.7.6
 
 2025年8月17日 日曜日
