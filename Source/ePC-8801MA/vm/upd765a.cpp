@@ -198,6 +198,7 @@ void UPD765A::reset()
 	
 	set_irq(false);
 	set_drq(false);
+	memset(disk_exchanged, 0, sizeof(disk_exchanged));
 }
 
 void UPD765A::write_io8(uint32 addr, uint32 data)
@@ -647,6 +648,10 @@ uint8 UPD765A::get_devstat(int drv)
 {
 	if(drv >= MAX_DRIVE) {
 		return 0x80 | drv;
+	}
+	if(disk_exchanged[drv]) {
+		disk_exchanged[drv] = false;
+		return drv | ((fdc[drv].track & 1) ? 0x04 : 0) | (fdc[drv].track ? 0 : 0x10) | (force_ready || disk[drv]->inserted ? 0x20 : 0);
 	}
 #ifdef SDL
 	if(!disk[drv]->inserted && !force_ready) {
@@ -1542,6 +1547,7 @@ void UPD765A::open_disk(int drv, _TCHAR path[], int bank)
 void UPD765A::close_disk(int drv)
 {
 	if(drv < MAX_DRIVE && disk[drv]->inserted) {
+		disk_exchanged[drv] = true;
 		disk[drv]->close();
 #ifdef _FDC_DEBUG_LOG
 		emu->out_debug_log("FDC: Disk Ejected (Drive=%d)\n", drv);
@@ -1618,7 +1624,7 @@ void UPD765A::set_drive_mfm(int drv, bool mfm)
 	}
 }
 
-#define STATE_VERSION	1
+#define STATE_VERSION	2
 
 void UPD765A::save_state(FILEIO* state_fio)
 {
@@ -1665,6 +1671,7 @@ void UPD765A::save_state(FILEIO* state_fio)
 	state_fio->FputBool(force_ready);
 	state_fio->FputBool(reset_signal);
 	state_fio->FputBool(prev_index);
+	state_fio->Fwrite(disk_exchanged, sizeof(disk_exchanged), 1);
 	state_fio->FputUint32(prev_drq_clock);
 }
 
@@ -1718,6 +1725,7 @@ bool UPD765A::load_state(FILEIO* state_fio)
 	force_ready = state_fio->FgetBool();
 	reset_signal = state_fio->FgetBool();
 	prev_index = state_fio->FgetBool();
+	state_fio->Fread(disk_exchanged, sizeof(disk_exchanged), 1);
 	prev_drq_clock = state_fio->FgetUint32();
 	return true;
 }
