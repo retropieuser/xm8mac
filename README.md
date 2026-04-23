@@ -1,14 +1,31 @@
 # XM8 for macOS
 
----
-[![Downloads](https://img.shields.io/github/downloads/bubio/xm8mac/total.svg)](https://github.com/bubio/xm8mac/releases/latest)
+<p align="center">
+  <img src="Documents/AppIcon.png" alt="XM8" width="128" height="128">
+</p>
+
+
+NEC PC-8801のエミュレーターです。マルチプラットフォームです。
+
+
+<p align="center">
+  <a href="https://github.com/bubio/xm8mac/releases/latest">
+    <img src="https://img.shields.io/github/v/release/bubio/xm8mac" alt="Latest Release">
+  </a>
+  <a href="https://github.com/bubio/xm8mac/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/bubio/xm8mac" alt="License">
+  </a>
+  <a href="https://github.com/bubio/xm8mac/releases/latest">
+    <img src="https://img.shields.io/github/downloads/bubio/xm8mac/total.svg" alt="Downloads">
+  </a>
+</p>
 
 ## XM8 for macOSとは
 ---
 XM8は、ＰＩ．さんが開発したマルチプラットフォーム（Windows/Linux/Android）に対応したPC-8801MA(PC-8801mkIISR上位互換)のエミュレータをmacOS用に改変したものです。
 
 <p align="center">
-<img width="752" src="https://user-images.githubusercontent.com/78299054/226607145-c6381e6e-acb8-4fba-88dc-0a8462298f6e.png">
+  <img width="752" src="Documents/Screenshot.png" alt="XM8 Screenhot">
 </p>
 
 このリポジトリは ＰＩ．さんから許可をいただき作成しています。
@@ -188,7 +205,7 @@ Builder/AndroidフォルダにAndroid Studio用のプロジェクトが入って
 
 <br />
 
-Builder/Androioフォルダにあるsetup_sdl2.shを実行すると、ビルドに必要なSDL2をダウンロードして適切な場所に配置します。
+Builder/Androidフォルダにあるsetup_sdl2.shを実行すると、ビルドに必要なSDL2をダウンロードして適切な場所に配置します。
 
 <br />
 
