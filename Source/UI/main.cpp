@@ -13,6 +13,28 @@
 #include "os.h"
 #include "common.h"
 #include "app.h"
+#include "clidisk.h"
+
+namespace {
+
+void WriteCommandLineResponse(const char *message, bool error)
+{
+#ifdef _WIN32
+	DWORD written;
+	HANDLE handle;
+
+	AttachConsole(ATTACH_PARENT_PROCESS);
+	handle = GetStdHandle(error ? STD_ERROR_HANDLE : STD_OUTPUT_HANDLE);
+	if (handle != NULL && handle != INVALID_HANDLE_VALUE) {
+		WriteFile(handle, message, static_cast<DWORD>(strlen(message)),
+			&written, NULL);
+	}
+#else
+	fputs(message, error ? stderr : stdout);
+#endif
+}
+
+} // namespace
 
 //
 // main()
@@ -21,7 +43,31 @@
 int main(int argc, char *argv[])
 {
 	int ret;
+	int exit_code;
 	App *app;
+	CliOptions options;
+
+#ifndef __ANDROID__
+	options = ParseCommandLine(argc, argv);
+	if (options.action == CliAction::ShowHelp) {
+		WriteCommandLineResponse(GetCommandLineHelp(), false);
+		return 0;
+	}
+	if (options.action == CliAction::ShowVersion) {
+		std::string version = "XM8 ";
+		version += GetAppVersionString();
+		version += "\n";
+		WriteCommandLineResponse(version.c_str(), false);
+		return 0;
+	}
+	if (options.action == CliAction::Error) {
+		std::string error = "XM8: ";
+		error += options.error;
+		error += "\n";
+		WriteCommandLineResponse(error.c_str(), true);
+		return 2;
+	}
+#endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 4)
 	SDL_SetHint(SDL_HINT_IME_INTERNAL_EDITING, "1");
@@ -63,9 +109,11 @@ int main(int argc, char *argv[])
 	app = new App;
 
 	// initialize application
-	if (app->Init() == true) {
+	exit_code = 1;
+	if (app->Init(options) == true) {
 		// run
 		app->Run();
+		exit_code = 0;
 	}
 
 	// deinitialize application
@@ -80,7 +128,7 @@ int main(int argc, char *argv[])
 	// quit SDL
 	SDL_Quit();
 
-	return 0;
+	return exit_code;
 }
 
 #endif // SDL
