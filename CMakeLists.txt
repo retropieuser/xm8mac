@@ -61,7 +61,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED OFF)
 
 
 # Dependencies must be included after Platforms.
-set(CMAKE_OSX_DEPLOYMENT_TARGET "10.15")
+set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13")
 if(APPLE)
   # macOS: Build as bundle and use bundled SDL2 source by default
   set(XM8_SYSTEM_SDL2 OFF CACHE BOOL "Use system-installed SDL2" FORCE)

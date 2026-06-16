@@ -2,7 +2,7 @@
 
 #include <fstream>
 #include <string>
-#include <filesystem>
+#include <cctype>
 
 namespace {
 
@@ -17,7 +17,37 @@ std::string Trim(const std::string& value)
     return value.substr(first, last - first + 1);
 }
 
+std::string ParentDirectory(const std::string& path)
+{
+    const std::string::size_type slash = path.find_last_of("/\\");
+    if (slash == std::string::npos) {
+        return "";
+    }
+    return path.substr(0, slash + 1);
+}
+
+std::string ResolveM3UEntry(const std::string& baseDir,
+                            const std::string& entry)
+{
+    if (entry.empty()) {
+        return entry;
+    }
+
+    if (entry[0] == '/') {
+        return entry;
+    }
+
+    if (entry.size() >= 2 &&
+        std::isalpha(static_cast<unsigned char>(entry[0])) &&
+        entry[1] == ':') {
+        return entry;
+    }
+
+    return baseDir + entry;
+}
+
 } // namespace
+
 
 M3UResult LoadM3U(const std::string& path)
 {
@@ -30,9 +60,8 @@ M3UResult LoadM3U(const std::string& path)
         return result;
     }
 
-    // Base directory of the M3U file
-    std::filesystem::path baseDir =
-        std::filesystem::path(path).parent_path();
+    // 👇 get base directory ONCE
+    const std::string baseDir = ParentDirectory(path);
 
     std::string line;
     while (std::getline(file, line)) {
@@ -46,10 +75,10 @@ M3UResult LoadM3U(const std::string& path)
             continue;
         }
 
-        // Resolve relative paths against M3U location
-        std::filesystem::path resolved = baseDir / line;
+        // 👇 resolve relative paths properly
+        std::string resolved = ResolveM3UEntry(baseDir, line);
 
-        result.entries.push_back(resolved.lexically_normal().string());
+        result.entries.push_back(resolved);
     }
 
     result.success = true;
