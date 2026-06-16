@@ -112,6 +112,7 @@ set(SRCS
   Source/UI/fileio.cpp
   Source/UI/font.cpp
   Source/UI/input.cpp
+  Source/UI/m3u.cpp
   Source/UI/main.cpp
   Source/UI/menu.cpp
   Source/UI/menuitem.cpp
