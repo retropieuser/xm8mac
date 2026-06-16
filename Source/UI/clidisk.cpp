@@ -207,6 +207,10 @@ CliOptions ParseCommandLine(int argc, char *argv[])
     		}
 
 			for (const auto& entry : playlist.entries) {
+                
+                if (options.disks.size() >=2) {
+                    break;
+                }
 
 	        DiskSpec spec;
 	        std::string error;

@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <string>
+#include <filesystem>
 
 namespace {
 
@@ -16,7 +17,7 @@ std::string Trim(const std::string& value)
     return value.substr(first, last - first + 1);
 }
 
-}
+} // namespace
 
 M3UResult LoadM3U(const std::string& path)
 {
@@ -28,6 +29,10 @@ M3UResult LoadM3U(const std::string& path)
         result.error = "unable to open m3u: " + path;
         return result;
     }
+
+    // Base directory of the M3U file
+    std::filesystem::path baseDir =
+        std::filesystem::path(path).parent_path();
 
     std::string line;
     while (std::getline(file, line)) {
@@ -41,7 +46,10 @@ M3UResult LoadM3U(const std::string& path)
             continue;
         }
 
-        result.entries.push_back(line);
+        // Resolve relative paths against M3U location
+        std::filesystem::path resolved = baseDir / line;
+
+        result.entries.push_back(resolved.lexically_normal().string());
     }
 
     result.success = true;
